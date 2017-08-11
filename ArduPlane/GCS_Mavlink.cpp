@@ -900,6 +900,18 @@ void GCS_MAVLINK_Plane::handleMessage(mavlink_message_t* msg)
         handle_request_data_stream(msg, true);
         break;
     }
+	
+		//Clara Todd - handle GPS message from skydiver
+	case MAVLINK_MSG_ID_GLOBAL_POSITION_INT: 
+    {
+        // decode
+        mavlink_global_position_int_t packet;
+        mavlink_msg_global_position_int_decode(msg, &packet);
+        plane.tracking_update_position(packet);
+		// Debug Statement to check GPS messages received
+		//hal.console->printf("got position - GPS");
+        break;
+    }
 
     case MAVLINK_MSG_ID_COMMAND_INT:
     {

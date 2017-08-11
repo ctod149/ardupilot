@@ -124,6 +124,9 @@ typedef enum GeofenceEnableReason {
 #define RELAY_TOGGLE 5
 #define STOP_REPEAT 10
 
+//Clara Todd Defines
+#define magnetic_declination 19.72
+
 
 // Logging message types
 enum log_messages {
@@ -147,6 +150,8 @@ enum log_messages {
     LOG_PIQY_MSG,
     LOG_PIQA_MSG,
     LOG_AETR_MSG,
+	LOG_SKYDIVER_GPS_MSG,// Clara Todd
+	LOG_SKYDIVER_PIXY_MSG,
 };
 
 #define MASK_LOG_ATTITUDE_FAST          (1<<0)

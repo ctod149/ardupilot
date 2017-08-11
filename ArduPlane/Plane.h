@@ -95,11 +95,18 @@
 #include <AP_Button/AP_Button.h>
 #include <AP_ICEngine/AP_ICEngine.h>
 #include <AP_Landing/AP_Landing.h>
+#include <AP_IRLock/AP_IRLock.h>  					// Clara Todd - to interface with pixy
+//#include <AP_IRLock/AP_IRLock_I2C.h>
+
 
 #include "GCS_Mavlink.h"
 #include "GCS_Plane.h"
 #include "quadplane.h"
 #include "tuning.h"
+#include "AP_IRLock.h" 						// Clara Todd - had to add these files as the library wasn't linking properly
+#include "LUT.h"							// Clara Todd - look up table
+
+
 
 // Configuration
 #include "config.h"
@@ -662,6 +669,31 @@ private:
         // The amount of time we should stay in a loiter for the Loiter Time command.  Milliseconds.
         uint32_t time_max_ms;
     } loiter;
+	
+	//CLARA TODD: Struct to store variables relavent to skydiver position
+	struct {
+        bool location_valid;    // true if we have a valid location for the skydiver
+        Location location;      // lat, long in degrees * 10^7; alt in meters * 100
+        uint32_t last_update_us;    // last position update in microseconds
+        uint32_t last_update_ms;    // last position update in milliseconds
+		uint32_t last_pixy_meas_time_ms; // Last time a measurement was taken from the pixy camera
+		bool camera_lock;		// true if pixy camera has a lock on the skydiver
+		float pixy_angle_x; 	// Angle that Pixy senses from UAV
+		uint16_t pixy_pixel_position_x;
+		uint16_t pixy_pixel_position_y;			//stores the pixel positions from pixy
+		uint16_t pixy_pixel_size_x;
+		uint16_t pixy_pixel_size_y;	
+		float pixy_angle_y;
+		float GPS_bearing;		// Bearing between two GPS locations
+		float GPS_angle;
+		float GPS_distance;		// Distance between 2 GPS locations
+		Vector3f velocity;
+    } skydiver;
+	
+	// CLARA TODD: initialise pixy cam
+	AP_IRLock_I2C pixy;
+	//AP_OpticalFlow_PIXY pixy;
+	float UAVHeading;
 
 
     // Conditional command
@@ -843,6 +875,9 @@ private:
     void Log_Write_Airspeed(void);
     void Log_Write_Home_And_Origin();
     void Log_Write_Vehicle_Startup_Messages();
+	// Clara Todd - SGPS AND PIXY logging funcitons 
+	void Log_Write_Skydiver_GPS();
+	void Log_Write_Skydiver_Pixy();
     void Log_Write_AOA_SSA();
     void Log_Write_AETR();
     void Log_Read(uint16_t log_num, int16_t start_page, int16_t end_page);
@@ -1107,6 +1142,11 @@ private:
     // support for AP_Avoidance custom flight mode, AVOID_ADSB
     bool avoid_adsb_init(bool ignore_checks);
     void avoid_adsb_run();
+	
+	//Clara Todd - added functions
+	void tracking_update_position(const mavlink_global_position_int_t &msg);
+	void calculate_bearing_and_distance(void);
+	void get_pixy_block(void);
 
 public:
     void mavlink_delay_cb();

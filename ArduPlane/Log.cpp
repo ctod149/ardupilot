@@ -244,6 +244,69 @@ void Plane::Log_Write_Performance()
     DataFlash.WriteCriticalBlock(&pkt, sizeof(pkt));
 }
 
+// Clara Todd - Struct to log GPS data of skydiver
+struct PACKED log_skydiver_GPS{
+	LOG_PACKET_HEADER;
+    uint64_t time_us;
+    int32_t  latitude;
+    int32_t  longitude;
+	float bearing;
+	float compassHeading;
+	float distance;
+	float angle;
+	bool valid_GPS;
+};
+
+// Clara Todd - Write GPS data of skydiver
+void Plane::Log_Write_Skydiver_GPS()
+{
+	const struct Location &loc = skydiver.location;
+
+    struct log_skydiver_GPS pkt = {
+        LOG_PACKET_HEADER_INIT(LOG_SKYDIVER_GPS_MSG),
+        time_us       : skydiver.last_update_us,
+        latitude      : loc.lat,
+        longitude     : loc.lng,
+		bearing		  : skydiver.GPS_bearing,
+		compassHeading: UAVHeading,
+		distance	  : skydiver.GPS_distance,
+		angle 		  : skydiver.GPS_angle,
+		valid_GPS 	  : skydiver.location_valid,
+    };
+    DataFlash.WriteBlock(&pkt, sizeof(pkt));
+}
+
+
+// Clara Todd - Struct to log Pixy data of skydiver
+struct PACKED log_skydiver_Pixy{
+	LOG_PACKET_HEADER;
+    uint64_t time_ms;
+	float x_angle;
+	uint16_t x;
+	uint16_t y;
+	uint16_t size_x;
+	uint16_t size_y;
+	bool valid_pixy;
+};
+
+// Clara Todd - Write pixy data of skydiver
+void Plane::Log_Write_Skydiver_Pixy()
+{
+
+    struct log_skydiver_Pixy pkt = {
+        LOG_PACKET_HEADER_INIT(LOG_SKYDIVER_PIXY_MSG),
+        time_ms       : skydiver.last_pixy_meas_time_ms,
+        x_angle	      : skydiver.pixy_angle_x,
+		x 			  : skydiver.pixy_pixel_position_x,
+		y 			  : skydiver.pixy_pixel_position_y,
+		size_x		  : skydiver.pixy_pixel_size_x,
+		size_y 		  : skydiver.pixy_pixel_size_y,
+		valid_pixy	  : skydiver.camera_lock,
+		
+    };
+    DataFlash.WriteBlock(&pkt, sizeof(pkt));
+}
+
 struct PACKED log_Startup {
     LOG_PACKET_HEADER;
     uint64_t time_us;
@@ -559,6 +622,11 @@ const struct LogStructure Plane::log_structure[] = {
       "PIQA", "Qffffff",  "TimeUS,Des,P,I,D,FF,AFF" }, \
     { LOG_AETR_MSG, sizeof(log_AETR), \
       "AETR", "Qhhhhh",  "TimeUS,Ail,Elev,Thr,Rudd,Flap" }, \
+	// Clara Todd - logging constructs for skydiver gps and pixy data
+	{ LOG_SKYDIVER_GPS_MSG, sizeof(log_skydiver_GPS), \
+      "SGPS",   "QLLffffb",  "TimeUS,Lat,Long,Bearing,UAV_head,Dist,Angle,valid" }, \
+	{ LOG_SKYDIVER_PIXY_MSG, sizeof(log_skydiver_Pixy), \
+      "PIXY",   "QfHHHHb",  "Time_ms,x_angle,x,y,size_x,size_y,valid" }, \
 };
 
 #if CLI_ENABLED == ENABLED
@@ -616,6 +684,9 @@ void Plane::Log_Write_Control_Tuning() {}
 void Plane::Log_Write_Nav_Tuning() {}
 void Plane::Log_Write_Status() {}
 void Plane::Log_Write_Sonar() {}
+//Clara Todd
+void Plane::Log_Write_Skydiver_GPS() {}
+void Plane::Log_Write_Skydiver_Pixy() {}
 
  #if OPTFLOW == ENABLED
 void Plane::Log_Write_Optflow() {}
