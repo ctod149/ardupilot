@@ -3,12 +3,10 @@
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
-
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -28,7 +26,7 @@ class IRLock
 public:
     // init - initialize sensor library
     // library won't be useable unless this is first called
-    virtual void init(int8_t bus) = 0;
+    virtual void init() = 0;
 
     // true if irlock sensor is online and healthy
     bool healthy() const { return _flags.healthy; }
@@ -49,9 +47,12 @@ public:
     // retrieve body frame unit vector in direction of target
     // returns true if data is available
     bool get_unit_vector_body(Vector3f& ret) const;
+	
+	bool get_unit_vector_body(uint16_t& retx, uint16_t& rety, uint16_t& sizex, uint16_t& sizey) const;
+	
+	void pixel_to_1M_plane(float pix_x, float pix_y, float &ret_x, float &ret_y) const;
     
-
-protected:
+	protected:
     struct AP_IRLock_Flags {
         uint8_t healthy : 1; // true if sensor is healthy
     } _flags;

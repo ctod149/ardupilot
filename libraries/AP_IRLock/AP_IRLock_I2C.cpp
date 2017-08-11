@@ -3,12 +3,10 @@
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
-
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -32,13 +30,9 @@ extern const AP_HAL::HAL& hal;
 
 #define IRLOCK_SYNC			0xAA55AA55
 
-void AP_IRLock_I2C::init(int8_t bus)
+void AP_IRLock_I2C::init()
 {
-    if (bus < 0) {
-        // default to i2c external bus
-        bus = 1;
-    }
-    dev = std::move(hal.i2c_mgr->get_device(bus, IRLOCK_I2C_ADDRESS));
+    dev = std::move(hal.i2c_mgr->get_device(1, IRLOCK_I2C_ADDRESS));
     if (!dev) {
         return;
     }
@@ -135,12 +129,19 @@ void AP_IRLock_I2C::read_frames(void)
     if (sem->take(HAL_SEMAPHORE_BLOCK_FOREVER)) {
         /* convert to angles */
         _target_info.timestamp = AP_HAL::millis();
-        _target_info.pos_x = 0.5f*(corner1_pos_x+corner2_pos_x);
-        _target_info.pos_y = 0.5f*(corner1_pos_y+corner2_pos_y);
-        _target_info.size_x = corner2_pos_x-corner1_pos_x;
-        _target_info.size_y = corner2_pos_y-corner1_pos_y;
+        //_target_info.pos_x = 0.5f*(corner1_pos_x+corner2_pos_x);
+        //_target_info.pos_y = 0.5f*(corner1_pos_y+corner2_pos_y);
+		_target_info.pos_x = irframe.pixel_x;
+        _target_info.pos_y = irframe.pixel_y;
+		//_target_info.pos_x = irframe.pixel_x;
+        //_target_info.pos_y = irframe.pixel_y;
+        _target_info.size_x = irframe.pixel_size_x;
+        _target_info.size_y = irframe.pixel_size_y;
+		//_target_info.size_x = corner2_pix_x-corner1_pix_x;
+        //_target_info.size_y = corner2_pix_y-corner1_pix_y;
         sem->give();
     }
+
 
 #if 0
     // debugging

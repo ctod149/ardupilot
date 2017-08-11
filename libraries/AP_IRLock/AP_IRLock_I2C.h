@@ -10,10 +10,10 @@ class AP_IRLock_I2C : public IRLock
 {
 public:
     // init - initialize sensor library
-    void init(int8_t bus) override;
+    void init();
 
     // retrieve latest sensor data - returns true if new data is available
-    bool update() override;
+    bool update();
 
 private:
     AP_HAL::OwnPtr<AP_HAL::Device> dev;
