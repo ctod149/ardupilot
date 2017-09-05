@@ -195,14 +195,14 @@ int32_t AP_YawController::PID(int32_t rate, float speed_scalar)
 	
 	_integrator_rate = (rate * delta_time) * Krate;
     angle_ref += _integrator_rate;                       // update integral
-    float angle_err = wrap_180_cd(angle_ref-_ahrs.yaw_sensor);  // find the angle error, wrapping to 180 centi-degrees
+    float angle_err = wrap_180_cd(angle_ref-_ahrs.roll_sensor);  // find the angle error, wrapping to 180 centi-degrees
     
 	
 	float integrator_delta = (angle_err * delta_time) * _K_I;
     _integrator += integrator_delta;                            // update integral
     _integrator = constrain_float(_integrator, -_imax, _imax);  // constrain the integrator term to _imax
 	
-	_last_out = (angle_err * _K_FF) - (100 * ToDeg(_ahrs.get_gyro().z) * _K_D) + _integrator;    // PID control law
+	_last_out = (angle_err * _K_FF) - (100 * ToDeg(_ahrs.get_gyro().x) * _K_D) + _integrator;    // PID control law
 	
 	return constrain_float(_last_out, -4500, 4500);    // constrain
 }
