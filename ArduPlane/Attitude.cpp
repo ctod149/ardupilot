@@ -698,3 +698,65 @@ void Plane::update_load_factor(void)
         roll_limit_cd = constrain_int32(roll_limit_cd, -roll_limit, roll_limit);
     }    
 }
+
+void Plane::UAV_Yaw_Control(void)
+{
+	float speed_scaler = get_speed_scaler();
+	float steer_rate;
+	
+	switch(control_mode){
+		case LOITER:
+			{
+			hal.console->printf("Auto Mode");
+			if (UAV_spin){
+				steer_rate = 1800; // default spinning steer rate 
+			} else {
+				steer_rate = skydiver.azimuth*100;  // steer rate (cd/s) to spin (given as 1*the azimuth in centidegrees)
+			}
+			}
+			break;
+		case ACRO:
+			{
+			steer_rate = channel_rudder->norm_input()*4500.0f;
+			//hal.console->printf("Rudder: %f\n", channel_rudder->norm_input());
+			float linear_servo_output = channel_throttle->norm_input();
+			if (linear_servo_output<0){
+				linear_servo_output=0;
+			}
+			ServoRelayEvents.do_set_servo(9, linear_servo_output*800+1100);
+			hal.console->printf("Servo Length: %f\n", linear_servo_output*800+1100);
+			}
+			
+			break;
+		default:
+			{
+			steer_rate = 0;
+			}
+			break;
+	}
+    
+    //
+    // Control Yaw
+    //
+	
+	//steering_control.steering = steering_control.rudder = rudder_input;
+	//steer_rate = channel_rudder->norm_input()*4500.0f;
+	//steering_control.steering = steering_control.rudder = steer_rate;
+	//hal.console->printf("Acro Mode");
+	//arm_motors(AP_Arming::RUDDER);
+	
+	steer_rate = yawController.PID(steer_rate, speed_scaler);
+	steering_control.steering = steering_control.rudder = steer_rate;
+	//hal.console->printf("Output: %i", SRV_Channels::get_output_scaled(SRV_Channel::k_rudder));
+	//hal.console->printf("Steer Rate: %f", steer_rate);
+	
+	/*hal.rcout->cork();
+	
+	SRV_Channels::set_output_scaled(SRV_Channel::k_rudder, steer_rate);
+	
+	//SRV_Channels::calc_pwm();
+	
+    SRV_Channels::output_ch_all();
+    
+    hal.rcout->push();*/
+}

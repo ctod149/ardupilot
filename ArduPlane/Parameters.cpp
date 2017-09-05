@@ -82,7 +82,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 1
     // @Increment: 0.01
     // @User: Standard
-    GSCALAR(kff_rudder_mix,         "KFF_RDDRMIX",    RUDDER_MIX),
+    GSCALAR(kff_rudder_mix,         "KFF_RDDRMIX",    1.0),
 
     // @Param: KFF_THR2PTCH
     // @DisplayName: Throttle to Pitch Mix
@@ -571,35 +571,35 @@ const AP_Param::Info Plane::var_info[] = {
     // @Description: Flight mode for switch position 1 (910 to 1230 and above 2049)
     // @Values: 0:Manual,1:CIRCLE,2:STABILIZE,3:TRAINING,4:ACRO,5:FBWA,6:FBWB,7:CRUISE,8:AUTOTUNE,10:Auto,11:RTL,12:Loiter,14:AVOID_ADSB,15:Guided,17:QSTABILIZE,18:QHOVER,19:QLOITER,20:QLAND,21:QRTL
     // @User: Standard
-    GSCALAR(flight_mode1,           "FLTMODE1",       FLIGHT_MODE_1),
+    GSCALAR(flight_mode1,           "FLTMODE1",       0),
 
     // @Param: FLTMODE2
     // @DisplayName: FlightMode2
     // @Description: Flight mode for switch position 2 (1231 to 1360)
     // @Values: 0:Manual,1:CIRCLE,2:STABILIZE,3:TRAINING,4:ACRO,5:FBWA,6:FBWB,7:CRUISE,8:AUTOTUNE,10:Auto,11:RTL,12:Loiter,14:AVOID_ADSB,15:Guided,17:QSTABILIZE,18:QHOVER,19:QLOITER,20:QLAND,21:QRTL
     // @User: Standard
-    GSCALAR(flight_mode2,           "FLTMODE2",       FLIGHT_MODE_2),
+    GSCALAR(flight_mode2,           "FLTMODE2",       12),
 
     // @Param: FLTMODE3
     // @DisplayName: FlightMode3
     // @Description: Flight mode for switch position 3 (1361 to 1490)
     // @Values: 0:Manual,1:CIRCLE,2:STABILIZE,3:TRAINING,4:ACRO,5:FBWA,6:FBWB,7:CRUISE,8:AUTOTUNE,10:Auto,11:RTL,12:Loiter,14:AVOID_ADSB,15:Guided,17:QSTABILIZE,18:QHOVER,19:QLOITER,20:QLAND,21:QRTL
     // @User: Standard
-    GSCALAR(flight_mode3,           "FLTMODE3",       FLIGHT_MODE_3),
+    GSCALAR(flight_mode3,           "FLTMODE3",       4),
 
     // @Param: FLTMODE4
     // @DisplayName: FlightMode4
     // @Description: Flight mode for switch position 4 (1491 to 1620)
     // @Values: 0:Manual,1:CIRCLE,2:STABILIZE,3:TRAINING,4:ACRO,5:FBWA,6:FBWB,7:CRUISE,8:AUTOTUNE,10:Auto,11:RTL,12:Loiter,14:AVOID_ADSB,15:Guided,17:QSTABILIZE,18:QHOVER,19:QLOITER,20:QLAND,21:QRTL
     // @User: Standard
-    GSCALAR(flight_mode4,           "FLTMODE4",       FLIGHT_MODE_4),
+    GSCALAR(flight_mode4,           "FLTMODE4",       12),
 
     // @Param: FLTMODE5
     // @DisplayName: FlightMode5
     // @Description: Flight mode for switch position 5 (1621 to 1749)
     // @Values: 0:Manual,1:CIRCLE,2:STABILIZE,3:TRAINING,4:ACRO,5:FBWA,6:FBWB,7:CRUISE,8:AUTOTUNE,10:Auto,11:RTL,12:Loiter,14:AVOID_ADSB,15:Guided,17:QSTABILIZE,18:QHOVER,19:QLOITER,20:QLAND,21:QRTL
     // @User: Standard
-    GSCALAR(flight_mode5,           "FLTMODE5",       FLIGHT_MODE_5),
+    GSCALAR(flight_mode5,           "FLTMODE5",       4),
 
     // @Param: FLTMODE6
     // @DisplayName: FlightMode6
@@ -613,7 +613,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Description: This selects the mode to start in on boot. This is useful for when you want to start in AUTO mode on boot without a receiver.
     // @Values: 0:Manual,1:CIRCLE,2:STABILIZE,3:TRAINING,4:ACRO,5:FBWA,6:FBWB,7:CRUISE,8:AUTOTUNE,10:Auto,11:RTL,12:Loiter,14:AVOID_ADSB,15:Guided,17:QSTABILIZE,18:QHOVER,19:QLOITER,20:QLAND,21:QRTL
     // @User: Advanced
-    GSCALAR(initial_mode,        "INITIAL_MODE",     MANUAL),
+    GSCALAR(initial_mode,        "INITIAL_MODE",     0),
 
     // @Param: LIM_ROLL_CD
     // @DisplayName: Maximum Bank Angle
@@ -704,7 +704,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Description: Enable rudder only mode. The rudder will control attitude in attitude controlled modes (such as FBWA). You should setup your transmitter to send roll stick inputs to the RCMAP_YAW channel (normally channel 4). The rudder servo should be attached to the RCMAP_YAW channel as well. Note that automatic ground steering will be disabled for rudder only aircraft. You should also set KFF_RDDRMIX to 1.0. You will also need to setup the YAW2SRV_DAMP yaw damping appropriately for your aircraft. A value of 0.5 for YAW2SRV_DAMP is a good starting point.
     // @Values: 0:Disabled,1:Enabled
     // @User: User
-    GSCALAR(rudder_only,             "RUDDER_ONLY",  0),
+    GSCALAR(rudder_only,             "RUDDER_ONLY",  1),
 
     // @Param: MIXING_OFFSET
     // @DisplayName: Mixing Offset

@@ -37,8 +37,9 @@ const AP_Scheduler::Task Plane::scheduler_tasks[] = {
     SCHED_TASK(check_short_failsafe,   50,    100),
     SCHED_TASK(update_speed_height,    50,    200),
     SCHED_TASK(update_flight_mode,    400,    100),
-    SCHED_TASK(stabilize,             400,    100),
+    //SCHED_TASK(stabilize,             400,    100),
     SCHED_TASK(set_servos,            400,    100),
+	SCHED_TASK(UAV_Yaw_Control,       400,    100), //Clara Todd
     SCHED_TASK(read_control_switch,     7,    100),
     SCHED_TASK(gcs_retry_deferred,     50,    500),
     SCHED_TASK(update_GPS_50Hz,        50,    300),
@@ -110,6 +111,8 @@ void Plane::setup()
 	
 	//Clara Todd - initialise pixy camera
 	pixy.init();
+	
+	//ServoRelayEvents.do_set_servo(9, 1900);
 
     // initialise the main loop scheduler
     scheduler.init(&scheduler_tasks[0], ARRAY_SIZE(scheduler_tasks));

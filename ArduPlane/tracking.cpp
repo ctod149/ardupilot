@@ -75,6 +75,10 @@ void Plane::get_pixy_block(void){
 		
 		skydiver.pixy_angle_x = atanf(posx/242.414)*180/M_PI;
 		
+		UAV_spin = false;
+		
+		skydiver.azimuth = skydiver.pixy_angle_x;
+		
 		hal.console->printf("Azimuth: %f\n", skydiver.pixy_angle_x);
 		
         skydiver.last_pixy_meas_time_ms = pixy.last_update_ms();

@@ -4,6 +4,7 @@
 #include <AP_Common/AP_Common.h>
 #include <AP_Vehicle/AP_Vehicle.h>
 #include <DataFlash/DataFlash.h>
+#include <AP_Math/AP_Math.h>
 #include <cmath>
 
 class AP_YawController {
@@ -19,6 +20,8 @@ public:
 	}
 
 	int32_t get_servo_out(float scaler, bool disable_integrator);
+	
+	int32_t PID(int32_t rate, float speed_scalar);
 
 	void reset_I();
 
@@ -40,6 +43,8 @@ private:
 	float _K_D_last;
 
 	float _integrator;
+	float _integrator_rate;
+	float angle_ref = 0;
 
 	DataFlash_Class::PID_Info _pid_info;
 

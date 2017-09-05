@@ -176,6 +176,37 @@ int32_t AP_YawController::get_servo_out(float scaler, bool disable_integrator)
 	return constrain_float(_last_out * 100, -4500, 4500);
 }
 
+/*
+	Clara Todd - PID controller to control yaw of the UAV
+	rate is desired spin rate in centi-degrees per second 
+*/
+int32_t AP_YawController::PID(int32_t rate, float speed_scalar)
+{
+    uint32_t tnow = AP_HAL::millis();;
+	uint32_t dt = tnow - _last_t;
+	if (_last_t == 0 || dt > 1000) {
+		dt = 0;
+	}
+	_last_t = tnow;
+	
+	float delta_time = (float) dt / 1000.0f;
+	
+	int32_t Krate = 1; // Gain on angular rate of UAV
+	
+	_integrator_rate = (rate * delta_time) * Krate;
+    angle_ref += _integrator_rate;                       // update integral
+    float angle_err = wrap_180_cd(angle_ref-_ahrs.yaw_sensor);  // find the angle error, wrapping to 180 centi-degrees
+    
+	
+	float integrator_delta = (angle_err * delta_time) * _K_I;
+    _integrator += integrator_delta;                            // update integral
+    _integrator = constrain_float(_integrator, -_imax, _imax);  // constrain the integrator term to _imax
+	
+	_last_out = (angle_err * _K_FF) - (100 * ToDeg(_ahrs.get_gyro().z) * _K_D) + _integrator;    // PID control law
+	
+	return constrain_float(_last_out, -4500, 4500);    // constrain
+}
+
 void AP_YawController::reset_I()
 {
 	_integrator = 0;
