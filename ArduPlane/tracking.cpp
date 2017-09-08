@@ -86,8 +86,9 @@ void Plane::get_pixy_block(void){
 		//hal.console->printf("x: %f\n", skydiver.pixy_angle_x);
 		
     }
-	else{
+	else if (skydiver.last_pixy_meas_time_ms<AP_HAL::millis()-200){
 		skydiver.camera_lock = false;
+		UAV_spin = true;
 	}
 	// log Pixy message
 	if (should_log(MASK_LOG_GPS) && !ahrs.have_ekf_logging()) {

@@ -696,6 +696,7 @@ private:
 	//AP_OpticalFlow_PIXY pixy;
 	float UAVHeading;
 	bool UAV_spin=true;
+	bool reset_controller = true;
 	
 	
 
@@ -935,7 +936,6 @@ private:
 	// Clara Todd - SGPS AND PIXY logging funcitons 
 	void Log_Write_Skydiver_GPS();
 	void Log_Write_Skydiver_Pixy();
-	void UAV_Yaw_Control(void); // Clara Todd
     void Log_Write_AOA_SSA();
     void Log_Write_AETR();
     void Log_Read(uint16_t log_num, int16_t start_page, int16_t end_page);
@@ -1205,6 +1205,8 @@ private:
 	void tracking_update_position(const mavlink_global_position_int_t &msg);
 	void calculate_bearing_and_distance(void);
 	void get_pixy_block(void);
+	void UAV_Yaw_Control(void); // Clara Todd
+	void set_vane_servos(float servo_value); //Clara Todd
 
 public:
     void mavlink_delay_cb();

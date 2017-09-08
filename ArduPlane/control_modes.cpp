@@ -52,12 +52,16 @@ void Plane::read_control_switch()
 
     switch_debouncer = false;
 
+    //Clara Todd hijacked the inverted flight channel - 6
     if (g.inverted_flight_ch != 0) {
         // if the user has configured an inverted flight channel, then
         // fly upside down when that channel goes above INVERTED_FLIGHT_PWM
-        inverted_flight = (control_mode != MANUAL && hal.rcin->read(g.inverted_flight_ch-1) > INVERTED_FLIGHT_PWM);
+        if (hal.rcin->read(g.inverted_flight_ch-1) >= 1700){
+			reset_controller=true;
+			hal.console->printf("RESET\n");
+		}
+			
     }
-
 #if PARACHUTE == ENABLED
     if (g.parachute_channel > 0) {
         if (hal.rcin->read(g.parachute_channel-1) >= 1700) {

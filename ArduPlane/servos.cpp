@@ -606,13 +606,16 @@ void Plane::servos_twin_engine_mix(void)
   Finally servos_output() is called to push the final PWM values
   for output channels
 */
+// Clara Todd - Gutted to only output set value to servos
 void Plane::set_servos(void)
 {
     // start with output corked. the cork is released when we run
     // servos_output(), which is run from all code paths in this
     // function
     hal.rcout->cork();
-    
+	
+	servos_output();
+    /*
     // this is to allow the failsafe module to deliberately crash 
     // the plane. Only used in extreme circumstances to meet the
     // OBC rules
@@ -630,10 +633,12 @@ void Plane::set_servos(void)
         servos_output();
         return;
     }
+	*/
 
     /*
       see if we are doing ground steering.
      */
+	 /*
     if (!steering_control.ground_steering) {
         // we are not at an altitude for ground steering. Set the nose
         // wheel to the rudder just in case the barometer has drifted
@@ -645,7 +650,8 @@ void Plane::set_servos(void)
         // steering output
         steering_control.rudder = steering_control.steering;
     }
-    SRV_Channels::set_output_scaled(SRV_Channel::k_rudder, steering_control.rudder);
+	// Clara Todd removed
+    //SRV_Channels::set_output_scaled(SRV_Channel::k_rudder, steering_control.rudder);
 
     // clear ground_steering to ensure manual control if the yaw stabilizer doesn't run
     steering_control.ground_steering = false;
@@ -654,23 +660,27 @@ void Plane::set_servos(void)
         steering_control.rudder = channel_rudder->get_control_in();
     }
     
-    SRV_Channels::set_output_scaled(SRV_Channel::k_rudder, steering_control.rudder);
-    SRV_Channels::set_output_scaled(SRV_Channel::k_steering, steering_control.steering);
+	//Clara Todd - Removed
+    //SRV_Channels::set_output_scaled(SRV_Channel::k_rudder, steering_control.rudder);
+    //SRV_Channels::set_output_scaled(SRV_Channel::k_steering, steering_control.steering);
 
+	set_servos_controlled();*/
+	/*
     if (control_mode == MANUAL) {
         set_servos_manual_passthrough();
     } else {
         set_servos_controlled();
-    }
+    }*/
 
     // setup flap outputs
+	/*
     set_servos_flaps();
     
     if (control_mode >= FLY_BY_WIRE_B ||
         quadplane.in_assisted_flight() ||
-        quadplane.in_vtol_mode()) {
+        quadplane.in_vtol_mode()) {*/
         /* only do throttle slew limiting in modes where throttle
-         *  control is automatic */
+         *  control is automatic *//*
         throttle_slew_limit();
     }
 
@@ -733,6 +743,7 @@ void Plane::set_servos(void)
 
     // run output mixer and send values to the hal for output
     servos_output();
+	*/
 }
 
 
@@ -746,21 +757,21 @@ void Plane::servos_output(void)
     hal.rcout->cork();
 
     // support twin-engine aircraft
-    servos_twin_engine_mix();
+    //servos_twin_engine_mix();
 
     // cope with tailsitters
-    quadplane.tailsitter_output();
+    //quadplane.tailsitter_output();
     
     // the mixers need pwm to be calculated now
     SRV_Channels::calc_pwm();
     
     // run vtail and elevon mixers
-    servo_output_mixers();
+    //servo_output_mixers(); - Clara Todd removed
 
     // support MANUAL_RCMASK
-    if (g2.manual_rc_mask.get() != 0) {
+    /*if (g2.manual_rc_mask.get() != 0) {
         SRV_Channels::copy_radio_in_out_mask(uint16_t(g2.manual_rc_mask.get()));
-    }
+    }*/
     
     SRV_Channels::calc_pwm();
 
@@ -768,9 +779,9 @@ void Plane::servos_output(void)
     
     hal.rcout->push();
 
-    if (g2.servo_channels.auto_trim_enabled()) {
+    /*if (g2.servo_channels.auto_trim_enabled()) {
         servos_auto_trim();
-    }
+    }*/
 }
 
 /*

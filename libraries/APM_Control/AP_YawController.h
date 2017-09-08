@@ -21,7 +21,7 @@ public:
 
 	int32_t get_servo_out(float scaler, bool disable_integrator);
 	
-	int32_t PID(int32_t rate, float speed_scalar);
+	int32_t PID(int32_t rate, float speed_scalar, bool initial_set_heading);
 
 	void reset_I();
 
@@ -45,6 +45,10 @@ private:
 	float _integrator;
 	float _integrator_rate;
 	float angle_ref = 0;
+	
+	//Clara Todd - to create continuous error angle
+	float angle_err_old=0;
+	float stored_error;
 
 	DataFlash_Class::PID_Info _pid_info;
 

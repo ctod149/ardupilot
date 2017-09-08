@@ -565,41 +565,43 @@ const AP_Param::Info Plane::var_info[] = {
     // @Description: RC Channel to use for flight mode control
     // @User: Advanced
     GSCALAR(flight_mode_channel,    "FLTMODE_CH",     FLIGHT_MODE_CHANNEL),
+	
+	// Clara Todd - Adjusted flight mode channels
 
     // @Param: FLTMODE1
     // @DisplayName: FlightMode1
     // @Description: Flight mode for switch position 1 (910 to 1230 and above 2049)
     // @Values: 0:Manual,1:CIRCLE,2:STABILIZE,3:TRAINING,4:ACRO,5:FBWA,6:FBWB,7:CRUISE,8:AUTOTUNE,10:Auto,11:RTL,12:Loiter,14:AVOID_ADSB,15:Guided,17:QSTABILIZE,18:QHOVER,19:QLOITER,20:QLAND,21:QRTL
     // @User: Standard
-    GSCALAR(flight_mode1,           "FLTMODE1",       0),
+    GSCALAR(flight_mode1,           "FLTMODE1",       15),
 
     // @Param: FLTMODE2
     // @DisplayName: FlightMode2
     // @Description: Flight mode for switch position 2 (1231 to 1360)
     // @Values: 0:Manual,1:CIRCLE,2:STABILIZE,3:TRAINING,4:ACRO,5:FBWA,6:FBWB,7:CRUISE,8:AUTOTUNE,10:Auto,11:RTL,12:Loiter,14:AVOID_ADSB,15:Guided,17:QSTABILIZE,18:QHOVER,19:QLOITER,20:QLAND,21:QRTL
     // @User: Standard
-    GSCALAR(flight_mode2,           "FLTMODE2",       12),
+    GSCALAR(flight_mode2,           "FLTMODE2",       4),
 
     // @Param: FLTMODE3
     // @DisplayName: FlightMode3
     // @Description: Flight mode for switch position 3 (1361 to 1490)
     // @Values: 0:Manual,1:CIRCLE,2:STABILIZE,3:TRAINING,4:ACRO,5:FBWA,6:FBWB,7:CRUISE,8:AUTOTUNE,10:Auto,11:RTL,12:Loiter,14:AVOID_ADSB,15:Guided,17:QSTABILIZE,18:QHOVER,19:QLOITER,20:QLAND,21:QRTL
     // @User: Standard
-    GSCALAR(flight_mode3,           "FLTMODE3",       4),
+    GSCALAR(flight_mode3,           "FLTMODE3",       12),
 
     // @Param: FLTMODE4
     // @DisplayName: FlightMode4
     // @Description: Flight mode for switch position 4 (1491 to 1620)
     // @Values: 0:Manual,1:CIRCLE,2:STABILIZE,3:TRAINING,4:ACRO,5:FBWA,6:FBWB,7:CRUISE,8:AUTOTUNE,10:Auto,11:RTL,12:Loiter,14:AVOID_ADSB,15:Guided,17:QSTABILIZE,18:QHOVER,19:QLOITER,20:QLAND,21:QRTL
     // @User: Standard
-    GSCALAR(flight_mode4,           "FLTMODE4",       12),
+    GSCALAR(flight_mode4,           "FLTMODE4",       4),
 
     // @Param: FLTMODE5
     // @DisplayName: FlightMode5
     // @Description: Flight mode for switch position 5 (1621 to 1749)
     // @Values: 0:Manual,1:CIRCLE,2:STABILIZE,3:TRAINING,4:ACRO,5:FBWA,6:FBWB,7:CRUISE,8:AUTOTUNE,10:Auto,11:RTL,12:Loiter,14:AVOID_ADSB,15:Guided,17:QSTABILIZE,18:QHOVER,19:QLOITER,20:QLAND,21:QRTL
     // @User: Standard
-    GSCALAR(flight_mode5,           "FLTMODE5",       4),
+    GSCALAR(flight_mode5,           "FLTMODE5",       12),
 
     // @Param: FLTMODE6
     // @DisplayName: FlightMode6
@@ -613,7 +615,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Description: This selects the mode to start in on boot. This is useful for when you want to start in AUTO mode on boot without a receiver.
     // @Values: 0:Manual,1:CIRCLE,2:STABILIZE,3:TRAINING,4:ACRO,5:FBWA,6:FBWB,7:CRUISE,8:AUTOTUNE,10:Auto,11:RTL,12:Loiter,14:AVOID_ADSB,15:Guided,17:QSTABILIZE,18:QHOVER,19:QLOITER,20:QLAND,21:QRTL
     // @User: Advanced
-    GSCALAR(initial_mode,        "INITIAL_MODE",     0),
+    GSCALAR(initial_mode,        "INITIAL_MODE",     15),
 
     // @Param: LIM_ROLL_CD
     // @DisplayName: Maximum Bank Angle
@@ -852,12 +854,14 @@ const AP_Param::Info Plane::var_info[] = {
     GSCALAR(override_safety,      "OVERRIDE_SAFETY",  1),
 #endif
 
+	// Clara Todd - Hijacked channel to reset controller
+
     // @Param: INVERTEDFLT_CH
     // @DisplayName: Inverted flight channel
     // @Description: A RC input channel number to enable inverted flight. If this is non-zero then the APM will monitor the corresponding RC input channel and will enable inverted flight when the channel goes above 1750.
     // @Values: 0:Disabled,1:Channel1,2:Channel2,3:Channel3,4:Channel4,5:Channel5,6:Channel6,7:Channel7,8:Channel8
     // @User: Standard
-    GSCALAR(inverted_flight_ch,     "INVERTEDFLT_CH", 0),
+    GSCALAR(inverted_flight_ch,     "INVERTEDFLT_CH", 6),
 
 #if HIL_SUPPORT
     // @Param: HIL_MODE
