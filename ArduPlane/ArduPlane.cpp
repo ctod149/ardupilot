@@ -117,6 +117,9 @@ void Plane::setup()
 	SRV_Channels::set_trim_to_pwm_for(SRV_Channel::k_elevator, 1525);
 	SRV_Channels::set_trim_to_pwm_for(SRV_Channel::k_aileron, 1425);
 	SRV_Channels::set_trim_to_pwm_for(SRV_Channel::k_rudder, 1550);
+	
+	//Clara Todd - Initialise linear servo (range of 1175-1500)
+	ServoRelayEvents.do_set_servo(9, 1175);
 
     // initialise the main loop scheduler
     scheduler.init(&scheduler_tasks[0], ARRAY_SIZE(scheduler_tasks));

@@ -702,69 +702,72 @@ void Plane::update_load_factor(void)
 void Plane::UAV_Yaw_Control(void)
 {
 	float speed_scaler = get_speed_scaler();
-	float steer_rate;
+	float steer_rate=0;
+	float servo_val;
 	
 	switch(control_mode){
 		case LOITER:
 			{
 			hal.console->printf("Auto Mode");
-			/*if (UAV_spin){
-				steer_rate = 1800; // default spinning steer rate 
+			if (UAV_spin){
+				steer_rate = 0; // default spinning steer rate 
 			} else {
-				steer_rate = skydiver.azimuth*100;  // steer rate (cd/s) to spin (given as 1*the azimuth in centidegrees)
-			}*/
-			steer_rate = skydiver.azimuth*100;  // steer rate (cd/s) to spin (given as 1*the azimuth in centidegrees)
+				steer_rate = -skydiver.azimuth*100;  // steer rate (cd/s) to spin (given as 1*the azimuth in centidegrees)
+			}
 			if (reset_controller){
-				steer_rate = yawController.PID(steer_rate, speed_scaler, reset_controller);
+				servo_val = yawController.PID(steer_rate, speed_scaler, reset_controller);
 				reset_controller = false;
 			}
 			else{
-				steer_rate = yawController.PID(steer_rate, speed_scaler, reset_controller);
+				servo_val = yawController.PID(steer_rate, speed_scaler, reset_controller);
 			}
+			Log_Write_Controller(steer_rate, servo_val, 12);
 			}
 			break;
 		case ACRO:
 			{
 			steer_rate = channel_rudder->norm_input()*4500.0f;
 			if (reset_controller){
-				steer_rate = yawController.PID(steer_rate, speed_scaler, reset_controller);
+				servo_val = yawController.PID(steer_rate, speed_scaler, reset_controller);
 				reset_controller = false;
 			}
 			else{
-				steer_rate = yawController.PID(steer_rate, speed_scaler, reset_controller);
+				servo_val = yawController.PID(steer_rate, speed_scaler, reset_controller);
 			}
 			//hal.console->printf("Rudder: %f\n", channel_rudder->norm_input());
 			float linear_servo_output = channel_throttle->norm_input();
 			if (linear_servo_output<0){
 				linear_servo_output=0;
 			}
-			ServoRelayEvents.do_set_servo(9, linear_servo_output*500+1000);
-			hal.console->printf("Servo Length: %f\n", linear_servo_output*800+1100);
+			ServoRelayEvents.do_set_servo(9, linear_servo_output*325+1175);
+			//hal.console->printf("Servo Length: %f\n", linear_servo_output*800+1100);
+			Log_Write_Controller(steer_rate, servo_val, 4);
 			}
 			
 			break;
 		case GUIDED:
 			{
-			steer_rate = channel_rudder->norm_input()*4500.0f;
+			servo_val = channel_rudder->norm_input()*4500.0f;
 			//hal.console->printf("Rudder: %f\n", channel_rudder->norm_input());
 			float linear_servo_output = channel_throttle->norm_input();
 			if (linear_servo_output<0){
 				linear_servo_output=0;
 			}
-			ServoRelayEvents.do_set_servo(9, linear_servo_output*500+1000);
-			hal.console->printf("Servo Length: %f\n", linear_servo_output*800+1100);
+			ServoRelayEvents.do_set_servo(9, linear_servo_output*325+1175);
+			hal.console->printf("Servo Length: %f\n", linear_servo_output*325+1175);
 			reset_controller = true;
+			Log_Write_Controller(steer_rate, servo_val, 15);
 			}
 			break;
 		default:
 			{
 			steer_rate = 0;
 			if (reset_controller){
-				steer_rate = yawController.PID(steer_rate, speed_scaler, reset_controller);
+				servo_val = yawController.PID(steer_rate, speed_scaler, reset_controller);
 				reset_controller = false;
 			}
 			else{
-				steer_rate = yawController.PID(steer_rate, speed_scaler, reset_controller);
+				servo_val = yawController.PID(steer_rate, speed_scaler, reset_controller);
 			}
 			float linear_servo_output = channel_throttle->norm_input();
 			if (linear_servo_output<0){
@@ -779,9 +782,9 @@ void Plane::UAV_Yaw_Control(void)
     // Control Yaw
     //
 	
-	set_vane_servos(steer_rate);
+	set_vane_servos(servo_val);
 	
-	hal.console->printf("Steer rate: %f\n", steer_rate);
+	hal.console->printf("Servo Value: %f\n", servo_val);
 
 }
 

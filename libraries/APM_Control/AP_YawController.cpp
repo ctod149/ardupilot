@@ -46,7 +46,7 @@ const AP_Param::GroupInfo AP_YawController::var_info[] = {
 	// @Range: 0 2
 	// @Increment: 0.25
     // @User: Advanced
-	AP_GROUPINFO("DAMP",   2, AP_YawController, _K_D,    0),
+	AP_GROUPINFO("DAMP",   2, AP_YawController, _K_D,    0.6),
 
 	// @Param: RLL
 	// @DisplayName: Yaw coordination gain
@@ -54,7 +54,7 @@ const AP_Param::GroupInfo AP_YawController::var_info[] = {
 	// @Range: 0.8 1.2
 	// @Increment: 0.05
     // @User: Advanced
-	AP_GROUPINFO("RLL",   3, AP_YawController, _K_FF,   1),
+	AP_GROUPINFO("RLL",   3, AP_YawController, _K_FF,   0.6),
 
     /*
       Note: index 4 should not be used - it was used for an incorrect

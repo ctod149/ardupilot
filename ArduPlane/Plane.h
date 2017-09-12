@@ -936,6 +936,7 @@ private:
 	// Clara Todd - SGPS AND PIXY logging funcitons 
 	void Log_Write_Skydiver_GPS();
 	void Log_Write_Skydiver_Pixy();
+	void Log_Write_Controller(float steer_rate_out, float servo_out, uint8_t mode);
     void Log_Write_AOA_SSA();
     void Log_Write_AETR();
     void Log_Read(uint16_t log_num, int16_t start_page, int16_t end_page);

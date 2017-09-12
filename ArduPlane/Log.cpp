@@ -280,7 +280,8 @@ void Plane::Log_Write_Skydiver_GPS()
 // Clara Todd - Struct to log Pixy data of skydiver
 struct PACKED log_skydiver_Pixy{
 	LOG_PACKET_HEADER;
-    uint64_t time_ms;
+	uint64_t time_ms;
+    uint64_t time_ms_pixy;
 	float x_angle;
 	uint16_t x;
 	uint16_t y;
@@ -295,7 +296,8 @@ void Plane::Log_Write_Skydiver_Pixy()
 
     struct log_skydiver_Pixy pkt = {
         LOG_PACKET_HEADER_INIT(LOG_SKYDIVER_PIXY_MSG),
-        time_ms       : skydiver.last_pixy_meas_time_ms,
+		time_ms		  : AP_HAL::millis(),
+        time_ms_pixy  : skydiver.last_pixy_meas_time_ms,
         x_angle	      : skydiver.pixy_angle_x,
 		x 			  : skydiver.pixy_pixel_position_x,
 		y 			  : skydiver.pixy_pixel_position_y,
@@ -303,6 +305,33 @@ void Plane::Log_Write_Skydiver_Pixy()
 		size_y 		  : skydiver.pixy_pixel_size_y,
 		valid_pixy	  : skydiver.camera_lock,
 		
+    };
+    DataFlash.WriteBlock(&pkt, sizeof(pkt));
+}
+
+// Clara Todd - Struct to log controller data of UAV
+struct PACKED log_Controller{
+	LOG_PACKET_HEADER;
+	uint64_t time_us;
+	float steer_rate;
+	float servo_output;
+	int16_t UAV_roll;
+	float roll_speed;
+	uint8_t mode;
+};
+
+// Clara Todd - Write Controller Data
+void Plane::Log_Write_Controller(float steer_rate_out, float servo_out, uint8_t mode)
+{
+
+    struct log_Controller pkt = {
+        LOG_PACKET_HEADER_INIT(LOG_CONTROLLER_MSG),
+		time_us		  : AP_HAL::micros64(),
+        steer_rate    : steer_rate_out,
+        servo_output  : servo_out,
+		UAV_roll	  : (int16_t)ahrs.roll_sensor,
+		roll_speed	  : ahrs.get_gyro().x,
+		mode		  : mode,
     };
     DataFlash.WriteBlock(&pkt, sizeof(pkt));
 }
@@ -626,7 +655,9 @@ const struct LogStructure Plane::log_structure[] = {
 	{ LOG_SKYDIVER_GPS_MSG, sizeof(log_skydiver_GPS), \
       "SGPS",   "QLLffffb",  "TimeUS,Lat,Long,Bearing,UAV_head,Dist,Angle,valid" }, \
 	{ LOG_SKYDIVER_PIXY_MSG, sizeof(log_skydiver_Pixy), \
-      "PIXY",   "QfHHHHb",  "Time_ms,x_angle,x,y,size_x,size_y,valid" }, \
+      "PIXY",   "QQfHHHHb",  "Time_ms,Time_ms_pixy,x_angle,x,y,size_x,size_y,valid" }, \
+	{ LOG_CONTROLLER_MSG, sizeof(log_Controller), \
+      "PIXY",   "QffcfB",  "Time_us,Steer_rate,servo,roll,ang_vel,mode" }, \
 };
 
 #if CLI_ENABLED == ENABLED
@@ -687,6 +718,7 @@ void Plane::Log_Write_Sonar() {}
 //Clara Todd
 void Plane::Log_Write_Skydiver_GPS() {}
 void Plane::Log_Write_Skydiver_Pixy() {}
+void Plane::Log_Write_Controller(float steer_rate_out, float servo_out, uint8_t mode){}
 
  #if OPTFLOW == ENABLED
 void Plane::Log_Write_Optflow() {}
