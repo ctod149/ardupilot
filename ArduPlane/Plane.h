@@ -95,8 +95,7 @@
 #include <AP_Button/AP_Button.h>
 #include <AP_ICEngine/AP_ICEngine.h>
 #include <AP_Landing/AP_Landing.h>
-//#include <AP_IRLock/AP_IRLock.h>  					// Clara Todd - to interface with pixy
-//#include <AP_IRLock/AP_IRLock_I2C.h>
+
 
 
 #include "GCS_Mavlink.h"
@@ -104,7 +103,6 @@
 #include "quadplane.h"
 #include "tuning.h"
 #include "AP_IRLock.h" 						// Clara Todd - had to add these files as the library wasn't linking properly
-//#include "LUT.h"							// Clara Todd - look up table
 
 
 
