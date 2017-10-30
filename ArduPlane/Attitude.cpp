@@ -699,6 +699,7 @@ void Plane::update_load_factor(void)
     }    
 }
 
+//Clara Todd Added
 void Plane::UAV_Yaw_Control(void)
 {
 	float speed_scaler = get_speed_scaler();
@@ -721,12 +722,12 @@ void Plane::UAV_Yaw_Control(void)
 			else{
 				servo_val = yawController.PID(steer_rate, speed_scaler, reset_controller);
 			}
-			Log_Write_Controller(steer_rate, servo_val, 12);
+			//Log_Write_Controller(steer_rate, servo_val, 12);
 			}
 			break;
 		case ACRO:
 			{
-			steer_rate = channel_rudder->norm_input()*4500.0f;
+			steer_rate = channel_rudder->norm_input()*36000.0f;
 			if (reset_controller){
 				servo_val = yawController.PID(steer_rate, speed_scaler, reset_controller);
 				reset_controller = false;
@@ -741,13 +742,20 @@ void Plane::UAV_Yaw_Control(void)
 			}
 			ServoRelayEvents.do_set_servo(9, linear_servo_output*325+1175);
 			//hal.console->printf("Servo Length: %f\n", linear_servo_output*800+1100);
-			Log_Write_Controller(steer_rate, servo_val, 4);
+			//Log_Write_Controller(steer_rate, servo_val, 4);
 			}
 			
 			break;
 		case GUIDED:
 			{
-			servo_val = channel_rudder->norm_input()*4500.0f;
+			if (reset_controller){
+				vane_pitch = vane_pitch+1000.0f;
+				reset_controller = false;
+			}
+			if (vane_pitch>4500){
+				vane_pitch = 4500.0f;
+			}
+			servo_val = channel_rudder->norm_input()*vane_pitch;
 			//hal.console->printf("Rudder: %f\n", channel_rudder->norm_input());
 			float linear_servo_output = channel_throttle->norm_input();
 			if (linear_servo_output<0){
@@ -755,8 +763,7 @@ void Plane::UAV_Yaw_Control(void)
 			}
 			ServoRelayEvents.do_set_servo(9, linear_servo_output*325+1175);
 			hal.console->printf("Servo Length: %f\n", linear_servo_output*325+1175);
-			reset_controller = true;
-			Log_Write_Controller(steer_rate, servo_val, 15);
+			//Log_Write_Controller(steer_rate, servo_val, 15);
 			}
 			break;
 		default:
@@ -788,7 +795,7 @@ void Plane::UAV_Yaw_Control(void)
 
 }
 
-// Clara Todd
+// Clara Todd Added
 void Plane::set_vane_servos(float servo_value)
 {
 	SRV_Channels::set_output_scaled(SRV_Channel::k_aileron, servo_value);

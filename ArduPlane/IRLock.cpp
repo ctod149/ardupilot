@@ -51,6 +51,7 @@ bool IRLock::get_unit_vector_body(Vector3f& ret) const
     return true;
 }
 
+//Clara Todd added to store pixel positions 
 bool IRLock::get_unit_vector_body(uint16_t& retx, uint16_t& rety, uint16_t& sizex, uint16_t& sizey) const
 {
     // return false if we have no target

@@ -26,8 +26,9 @@ void Plane::tracking_update_position(const mavlink_global_position_int_t &msg)
     }
 }
 
-
-
+/*
+	Clara Todd - This function calculates the skydiver azimuth and range from the pixy camera 
+*/
 void Plane::get_pixy_block(void){
 	
 	int negative_X = 0;
@@ -35,27 +36,19 @@ void Plane::get_pixy_block(void){
 	int posx = 0;
 	int posy = 0;
 	
-	Vector3f velocity;
-	ahrs.get_velocity_NED(velocity);
-	//hal.console->printf("x: %f ", velocity.x);
-	//hal.console->printf("y: %f \n", velocity.y);
-	
 	// get new sensor data
     pixy.update();
 	
-    //hal.console->printf("n_t: %i", pixy.num_targets());
-	//hal.console->printf("%i", pixy.last_update_ms());
-	//hal.console->printf("%i", skydiver.last_pixy_meas_time_ms);
+	//Check we have a valid target from Pixy camera
     if (pixy.num_targets() > 0 && pixy.last_update_ms() != skydiver.last_pixy_meas_time_ms) {
-		skydiver.camera_lock = true;
-        //pixy.get_angle_to_target_rad(skydiver.pixy_angle_x, skydiver.pixy_angle_y);
-		
+		// Get pixel coordinates of target
 		pixy.get_unit_vector_body(skydiver.pixy_pixel_position_x, skydiver.pixy_pixel_position_y, skydiver.pixy_pixel_size_x, skydiver.pixy_pixel_size_y);
-		//hal.console->printf("position: %u\n", skydiver.pixy_pixel_position_x);
 		
+		//Change to be +/- 160 pixels in x dimension and +/- 100 pixels in y dimension
 		posx = skydiver.pixy_pixel_position_x - 160;
 		posy = skydiver.pixy_pixel_position_y - 100;
 		
+		//Store negative value and make values positive as LUT is symmetric so only half the values are stored.
 		if (posx <0){
 			negative_X = 1;
 			posx *= -1;
@@ -67,29 +60,24 @@ void Plane::get_pixy_block(void){
 			posx = 158;
 		}
 		posy /= 2; //Divide by two due to compression of LUT
+		
+		//Undistort pixel positions
 		posx = LUTX[posy][posx];
 		
 		if (negative_X){
 			posx *= -1;
 		}
 		
+		//Calculate azimuth
 		skydiver.pixy_angle_x = atanf(posx/242.414)*180/M_PI;
 		
-		UAV_spin = false;
+		//Calculate Range
+		skydiver.pixy_range = (0.2*242.414/skydiver.pixy_pixel_size_y + 0.2*163.827/skydiver.pixy_pixel_size_x)/2;
 		
 		skydiver.azimuth = skydiver.pixy_angle_x;
-		
-		hal.console->printf("Azimuth: %f\n", skydiver.pixy_angle_x);
-		
         skydiver.last_pixy_meas_time_ms = pixy.last_update_ms();
-		// Debug Statement to check angle received
-		//hal.console->printf("x: %f\n", skydiver.pixy_angle_x);
-		
     }
-	else if (skydiver.last_pixy_meas_time_ms<AP_HAL::millis()-200){
-		skydiver.camera_lock = false;
-		UAV_spin = true;
-	}
+	
 	// log Pixy message
 	if (should_log(MASK_LOG_GPS) && !ahrs.have_ekf_logging()) {
 		Log_Write_Skydiver_Pixy();

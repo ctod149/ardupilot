@@ -151,8 +151,7 @@ enum log_messages {
     LOG_PIQA_MSG,
     LOG_AETR_MSG,
 	LOG_SKYDIVER_GPS_MSG,// Clara Todd
-	LOG_SKYDIVER_PIXY_MSG,
-	LOG_CONTROLLER_MSG
+	LOG_SKYDIVER_PIXY_MSG //Clara Todd
 };
 
 #define MASK_LOG_ATTITUDE_FAST          (1<<0)

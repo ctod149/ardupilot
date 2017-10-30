@@ -106,6 +106,7 @@ bool AP_IRLock_I2C::read_block(struct frame &irframe)
     return true;
 }
 
+//Clara Todd - edited to not adjust pixel poisiton 
 void AP_IRLock_I2C::read_frames(void)
 {
     if (!sync_frame_start()) {

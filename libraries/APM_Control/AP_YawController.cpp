@@ -46,7 +46,7 @@ const AP_Param::GroupInfo AP_YawController::var_info[] = {
 	// @Range: 0 2
 	// @Increment: 0.25
     // @User: Advanced
-	AP_GROUPINFO("DAMP",   2, AP_YawController, _K_D,    0.6),
+	AP_GROUPINFO("DAMP",   2, AP_YawController, _K_D,    0.2),
 
 	// @Param: RLL
 	// @DisplayName: Yaw coordination gain
@@ -54,7 +54,7 @@ const AP_Param::GroupInfo AP_YawController::var_info[] = {
 	// @Range: 0.8 1.2
 	// @Increment: 0.05
     // @User: Advanced
-	AP_GROUPINFO("RLL",   3, AP_YawController, _K_FF,   0.6),
+	AP_GROUPINFO("RLL",   3, AP_YawController, _K_FF,   0.3),
 
     /*
       Note: index 4 should not be used - it was used for an incorrect
@@ -182,7 +182,7 @@ int32_t AP_YawController::get_servo_out(float scaler, bool disable_integrator)
 */
 int32_t AP_YawController::PID(int32_t rate, float speed_scalar, bool initial_set_heading)
 {
-    uint32_t tnow = AP_HAL::millis();;
+    uint32_t tnow = AP_HAL::millis();
 	uint32_t dt = tnow - _last_t;
 	if (_last_t == 0 || dt > 1000) {
 		dt = 0;
@@ -197,14 +197,16 @@ int32_t AP_YawController::PID(int32_t rate, float speed_scalar, bool initial_set
     angle_ref += _integrator_rate;	// update integral
 	angle_ref = wrap_180_cd(angle_ref);
 	
+	// As the yaw rate is integrated we need an initial condition on the anglular position of the UAV
 	if (initial_set_heading){
 		angle_ref = _ahrs.roll_sensor;
 		stored_error = 0;
 	}
 	
     float angle_err = angle_ref-_ahrs.roll_sensor;  // find the angle error, wrapping to 180 centi-degrees
+	// Roll sensor used due to horizontal position of UAV in wind tunnel - ordinarily this would be yaw-sensor.
 	
-
+	//Turn into a continuous signal to avoid -180 to 180 degree discontinuities
 	float delta = angle_err-angle_err_old;
 	if (delta > 28000){
 		stored_error-=36000;
@@ -214,8 +216,7 @@ int32_t AP_YawController::PID(int32_t rate, float speed_scalar, bool initial_set
 	}
 	
 	angle_err_old = angle_err;
-	//hal.console->printf("PID error: %d\n", angle_err+stored_error);
-    
+	
 	
 	float integrator_delta = ((angle_err+stored_error) * delta_time) * _K_I;
     _integrator += integrator_delta;                            // update integral
@@ -223,7 +224,7 @@ int32_t AP_YawController::PID(int32_t rate, float speed_scalar, bool initial_set
 	
 	_last_out = ((angle_err+stored_error) * _K_FF) - (100 * ToDeg(_ahrs.get_gyro().x) * _K_D) + _integrator;    // PID control law
 	
-	return constrain_float(_last_out, -4500, 4500);    // constrain
+	return constrain_float(_last_out, -4500, 4500);    // constrain to +/- 45 degrees
 }
 
 void AP_YawController::reset_I()
