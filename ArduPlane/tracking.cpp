@@ -75,16 +75,27 @@ void Plane::get_pixy_block(void){
 		skydiver.pixy_range = (0.2*242.414/skydiver.pixy_pixel_size_y + 0.2*163.827/skydiver.pixy_pixel_size_x)/2;
 		
 		skydiver.azimuth = skydiver.pixy_angle_x;
+		UAV_spin = false;
         skydiver.last_pixy_meas_time_ms = pixy.last_update_ms();
     }
+	
+	// Data Fusion Algorithm
+	else if (skydiver.last_pixy_meas_time_ms<AP_HAL::millis()-200){
+		if(skydiver.location_valid && skydiver.GPS_distance>3 && skydiver.last_update_ms>AP_HAL::millis()-500){
+			skydiver.azimuth = skydiver.GPS_angle;
+			UAV_spin = false;
+		}
+		else{
+			UAV_spin = true;
+		}
+	}
+		
 	
 	// log Pixy message
 	if (should_log(MASK_LOG_GPS) && !ahrs.have_ekf_logging()) {
 		Log_Write_Skydiver_Pixy();
 	}
 }
-
-
 
 
 // Use AP_MATH/location functions to return bearing and distance between UAV and Skydiver

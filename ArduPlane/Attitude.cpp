@@ -711,7 +711,7 @@ void Plane::UAV_Yaw_Control(void)
 			{
 			hal.console->printf("Auto Mode");
 			if (UAV_spin){
-				steer_rate = 0; // default spinning steer rate 
+				steer_rate = 18000; // default spinning steer rate 
 			} else {
 				steer_rate = -skydiver.azimuth*100;  // steer rate (cd/s) to spin (given as 1*the azimuth in centidegrees)
 			}

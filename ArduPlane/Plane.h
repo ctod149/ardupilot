@@ -687,13 +687,14 @@ private:
 		float GPS_distance;		// Distance between 2 GPS locations
 		Vector3f velocity;
 		float azimuth;
+		float pixy_range;
     } skydiver;
 	
 	// CLARA TODD: initialise pixy cam
 	AP_IRLock_I2C pixy;
 	//AP_OpticalFlow_PIXY pixy;
 	float UAVHeading;
-	bool UAV_spin=true;
+	bool UAV_spin=false;
 	bool reset_controller = true;
 	float vane_pitch = 1000.0f;
 	
