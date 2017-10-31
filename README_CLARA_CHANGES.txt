@@ -1,6 +1,10 @@
 31/10/2017
 Arduplane has been adapted to control the linear servo and three rotational servos.
-Changes are marked with Clara Todd so are searchable.
+Changes are marked in the code with Clara Todd so are searchable.
+The bottom of this file gives changes that will have to be made to move the UAV from wind tunnel testing to freefall testing
+
+
+FILES THAT HAVE BEEN CHANGED AND THE CHANGES
 
 Plane.h:
 struct skydiver stores information relevant to skydiver.
@@ -45,8 +49,24 @@ Removed need for safety switch
 Libraries\AP_Arming\AP_Arming.cpp:
 Disabled requirement to arm
 
+Libraries\AP_AHRS\AP_AHRS.cpp:
+Set Orientation to Roll 180
+
 AP_IRLockI2C.cpp:
 Adjusted read_frames to store pixel positions 
 
 IRLock.cpp:
 Added override function: get_unit_vector_body to return pixel position and sizes of Skydiver.
+
+
+TO CHANGE TO BE SUITABLE FOR FREEFALL TEST:
+
+In Libraries\APM_Control\AP_YawController.cpp:
+In PID: Change _ahrs.roll_sensor for _ahrs.yaw_sensor
+
+In Libraries\AP_AHRS\AP_AHRS.cpp:
+Change ORIENTATION to (probably) Roll180Pitch270 (but might require some playing around)
+
+Check pixy camera and GPS transition works properly (i.e. both measurements have same sign)
+(Beware that UAV steer_rate is given as steer_rate = -skydiver.azimuth*100;)
+
