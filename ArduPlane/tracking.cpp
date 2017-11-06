@@ -108,7 +108,7 @@ void Plane::calculate_bearing_and_distance(void)
 		
 		UAVHeading = (ahrs.yaw_sensor / 100.0);
 		
-		skydiver.GPS_angle = UAVHeading-skydiver.GPS_bearing-magnetic_declination; // magnetic_decliantion
+		skydiver.GPS_angle = skydiver.GPS_bearing-UAVHeading-magnetic_declination; // magnetic_decliantion
 		if (skydiver.GPS_angle > 180){
 			skydiver.GPS_angle-=360.0;
 		}

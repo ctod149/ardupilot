@@ -676,14 +676,14 @@ private:
         uint32_t last_update_ms;    // last position update in milliseconds
 		uint32_t last_pixy_meas_time_ms; // Last time a measurement was taken from the pixy camera
 		bool camera_lock;		// true if pixy camera has a lock on the skydiver
-		float pixy_angle_x; 	// Angle that Pixy senses from UAV
+		float pixy_angle_x = 0.0f; 	// Angle that Pixy senses from UAV
 		uint16_t pixy_pixel_position_x;
 		uint16_t pixy_pixel_position_y;			//stores the pixel positions from pixy
 		uint16_t pixy_pixel_size_x;
 		uint16_t pixy_pixel_size_y;	
 		float pixy_angle_y;
 		float GPS_bearing;		// Bearing between two GPS locations
-		float GPS_angle;
+		float GPS_angle = 0.0f;
 		float GPS_distance;		// Distance between 2 GPS locations
 		Vector3f velocity;
 		float azimuth;

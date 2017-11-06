@@ -909,7 +909,7 @@ void GCS_MAVLINK_Plane::handleMessage(mavlink_message_t* msg)
         mavlink_msg_global_position_int_decode(msg, &packet);
         plane.tracking_update_position(packet);
 		// Debug Statement to check GPS messages received
-		//hal.console->printf("got position - GPS");
+		hal.console->printf("got position - GPS");
         break;
     }
 

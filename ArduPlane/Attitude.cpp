@@ -709,9 +709,10 @@ void Plane::UAV_Yaw_Control(void)
 	switch(control_mode){
 		case LOITER:
 			{
-			hal.console->printf("Auto Mode");
+			//hal.console->printf("Auto Mode");
 			if (UAV_spin){
-				steer_rate = 18000; // default spinning steer rate 
+				//steer_rate = 18000; // default spinning steer rate 
+				steer_rate = 0;
 			} else {
 				steer_rate = -skydiver.azimuth*100;  // steer rate (cd/s) to spin (given as 1*the azimuth in centidegrees)
 			}
@@ -762,7 +763,7 @@ void Plane::UAV_Yaw_Control(void)
 				linear_servo_output=0;
 			}
 			ServoRelayEvents.do_set_servo(9, linear_servo_output*325+1175);
-			hal.console->printf("Servo Length: %f\n", linear_servo_output*325+1175);
+			//hal.console->printf("Servo Length: %f\n", linear_servo_output*325+1175);
 			//Log_Write_Controller(steer_rate, servo_val, 15);
 			}
 			break;
@@ -791,7 +792,7 @@ void Plane::UAV_Yaw_Control(void)
 	
 	set_vane_servos(servo_val);
 	
-	hal.console->printf("Servo Value: %f\n", servo_val);
+	//hal.console->printf("Servo Value: %f\n", servo_val);
 
 }
 
