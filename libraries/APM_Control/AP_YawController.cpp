@@ -202,12 +202,14 @@ int32_t AP_YawController::PID(int32_t rate, float speed_scalar, bool initial_set
 	// As the yaw rate is integrated we need an initial condition on the anglular position of the UAV
 	if (initial_set_heading){
 		angle_ref = _ahrs.yaw_sensor;
+		angle_ref = wrap_180_cd(angle_ref);
 		stored_error = 0;
-		angle_err = angle_ref-_ahrs.yaw_sensor;  // find the angle error, wrapping to 180 centi-degrees
+		angle_err = 0; 
 	}
 	else{
     
-		angle_err = angle_ref-_ahrs.yaw_sensor;  // find the angle error, wrapping to 180 centi-degrees
+		angle_err = angle_ref-wrap_180_cd(_ahrs.yaw_sensor);  // find the angle error, wrapping to 180 centi-degrees
+		//angle_err = wrap_180_cd(angle_err);
 		
 		//Turn into a continuous signal to avoid -180 to 180 degree discontinuities
 		float delta = angle_err-angle_err_old;
@@ -219,8 +221,6 @@ int32_t AP_YawController::PID(int32_t rate, float speed_scalar, bool initial_set
 		}
 	}
 	angle_err_old = angle_err;
-	
-		
 	
 	float integrator_delta = ((angle_err+stored_error) * delta_time) * _K_I;
     _integrator += integrator_delta;                            // update integral
